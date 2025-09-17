@@ -118,9 +118,9 @@ const textures = {};
 
 function preloadTextures(callback) {
   const images = {
-    desert: 'desert.png',
-    steppe: 'steppe.png',
-    montane: 'montane.jpg'
+    desert: 'art/desert.png',
+    steppe: 'art/steppe.png',
+    montane: 'art/montane.jpg'
   };
   let loaded = 0;
   const total = Object.keys(images).length;

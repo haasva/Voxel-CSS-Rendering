@@ -92,7 +92,7 @@
   content: '';
   top: 0;
   left: 0;
-  background-image: url('grain.gif');
+  background-image: url('../art/grain.gif');
   background-size: 200px 200px;
   background-position: center;
   z-index: 1;
@@ -113,7 +113,7 @@
   opacity: 0.7;
   pointer-events: none;
   content: '';
-  background-image: url("wrapper-overlay.png");
+  background-image: url("../art/wrapper-overlay.png");
   background-size: 110% 110%;
   background-position: center;
   z-index: 3;
@@ -141,7 +141,7 @@
 
 #engine-wrapper::after {
   content: '';
-  -webkit-mask-box-image: url('wrapper-overlay.png') stretch ;
+  -webkit-mask-box-image: url('../art/wrapper-overlay.png') stretch ;
   backdrop-filter: blur(5px);
   filter: blur(5px);
   position: absolute;
@@ -170,27 +170,27 @@
 
 }
 #skybox #top {
-    background-image: url('/skybox/top.jpg');
+    background-image: url('../art/skybox/top.jpg');
     transform: rotateX(90deg) translateZ(150px) rotate(90deg);
 }
 #skybox #bottom {
-    background-image: url('/skybox/bottom.jpg');
+    background-image: url('../art/skybox/bottom.jpg');
     transform: rotateX(90deg) translateZ(150px);
 }
 #skybox #right {
-    background-image: url('/skybox/right.jpg');
+    background-image: url('../art/skybox/right.jpg');
     transform: rotateY(270deg) translateY(-1900px) translateZ(250px);
 }
 #skybox #left {
-    background-image: url('/skybox/left.jpg');
+    background-image: url('../art/skybox/left.jpg');
     transform: rotateY(90deg) translateY(-2400px) translateZ(250px);
 }
 #skybox #front {
-    background-image: url('/skybox/front.jpg');
+    background-image: url('../art/skybox/front.jpg');
     transform: rotateX(360deg) translateY(-900px) translateZ(250px);
 }
 #skybox #back {
-    background-image: url('/skybox/back.jpg');
+    background-image: url('../art/skybox/back.jpg');
     transform: rotateX(360deg) translateY(-1400px) translateZ(-250px) rotateY(180deg);
 }
 
@@ -255,7 +255,7 @@
 } 
 
 .cardboard.tree {
-    background-image: url('1.PNG');
+    background-image: url('../art/1.PNG');
 }
 
 

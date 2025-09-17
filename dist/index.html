@@ -1,0 +1,84 @@
+<html>
+  <head>
+    <!-- Meta Tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+    <!-- Favicon -->
+  
+    <!-- Title -->
+    <title>Point Based Rendering</title>
+  
+    <!-- Stylesheets -->
+
+    
+    <script type="module" crossorigin src="/VOXEL_CANVAS/assets/index-B4jRmdiC.js"></script>
+    <link rel="stylesheet" crossorigin href="/VOXEL_CANVAS/assets/index-CLpZtpOB.css">
+  </head>
+  
+  
+<body name="bodydocument">
+
+
+
+
+
+<div id="xyz">
+  <span class="c">X: <span id="x"></span></span>
+  <span class="c">Y: <span id="y"></span></span>
+  <span class="c">Z: <span id="z"></span></span>
+  <span class="c">Block: <span id="block"></span></span>
+</div>
+
+
+<div id="mega-wrapper">
+<div id="engine-wrapper">
+<div id="renderer">
+
+<div id="skybox">
+  <div class="face" id="top"></div>
+  <div class="face" id="bottom"></div>
+  <div class="face" id="front"></div>
+  <div class="face" id="back"></div>
+  <div class="face" id="right"></div>
+  <div class="face" id="left"></div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+<svg height="0" width="0" aria-hidden="true">
+  <filter id="posterize">
+    <feComponentTransfer>
+      <feFuncR type="discrete" 
+               tableValues="0 0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1" />
+      <feFuncG type="discrete" 
+               tableValues="0 0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1" />
+      <feFuncB type="discrete" 
+               tableValues="0 0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1" />
+    </feComponentTransfer>
+  </filter>
+</svg>
+
+
+
+<svg width="0" height="0" aria-hidden="true">
+  <filter id="pixelate">
+    <feFlood x="1" y="1" width="1" height="1"/>
+    <feBlend width="3" height="3"/>
+    <feTile/>
+    <feComposite in="SourceGraphic" operator="in"/>
+    <feMorphology operator="dilate" radius="1"/>
+  </filter>
+</svg>
+
+
+</body>
+</html>

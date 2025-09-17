@@ -96,4 +96,3 @@ export function updateAllCardboardRotations() {
         cardboard.style.setProperty('--rotation-z', `${SETTINGS.yaw}deg`);
     });
 }
-

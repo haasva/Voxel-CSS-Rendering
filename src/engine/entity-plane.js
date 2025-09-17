@@ -3,6 +3,7 @@ import { player } from "./renderer.js";
 
 const ePlane = document.getElementById('e-plane');
 
+export const cardboardMap = new Map();
 
 export function initEPlane() {
 
@@ -43,7 +44,7 @@ export async function updateEPlane() {
   const container = document.getElementById("ePlane");
 
   if (!container) return;
-    container.style.transform = `rotateX(90deg)  rotateZ(180deg) translateZ(${-((player.worldZ - 2 )* 100)}px) translateX(-100px)`;
+    container.style.transform = `rotateX(90deg)  rotateZ(180deg) translateZ(${-((player.worldZ) * 100)}px) translateX(-100px)`;
   let i = 0;
   const halfGrid = 5;
 
@@ -54,13 +55,14 @@ export async function updateEPlane() {
 
       const cell = container.children[i];
       cell.innerHTML = '';
+      cell.classList.remove('tree');
+
 
       if (
         worldX < 0 || worldX >= worldData.length ||
         worldY < 0 || worldY >= worldData[0].length
       ) {
-        cell.textContent = "X";
-        cell.style.background = "#400"; // out of bounds
+
       } else {
         // find max elevation in this column (X,Y)
         let maxElevation = -1;
@@ -88,7 +90,7 @@ export async function updateEPlane() {
   }
 }
 
-export const cardboardMap = new Map();
+
 
 function createTreeSprite(x, y) {
   const key = `${x},${y}`;
@@ -120,4 +122,3 @@ function getSurfaceBlock(x, y) {
   console.log(`Highest elevation at (${x},${y}) is ${highestElevation}`);
   return highestElevation + 2;
 }
-

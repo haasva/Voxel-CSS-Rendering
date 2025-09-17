@@ -1,4 +1,4 @@
-import { worldData } from "../init/world-data.js";
+import { worldData, generator, applyShading } from "../init/world-data.js";
 import { applyNeoTransforms, updateAllCardboardRotations } from "../init/start.js";
 import { SETTINGS } from "../init/start.js";
 import { updateEPlane } from "./entity-plane.js";
@@ -21,6 +21,7 @@ export let worldX, worldY, worldZ;
 
 export let currentBlock = null;
 
+const visibleBlocks = new Map();
 
 export function createVoxelCanvasGrid() {
   const container = document.getElementById('renderer');
@@ -103,12 +104,14 @@ Object.values(canvases).forEach(arr => {
 preloadTextures(() => {
   console.log("All textures loaded!");
   renderWorldToCanvases();
+  updatePlayerHeight();
 });
   
 }
 
 
 function renderWorldToCanvases() {
+  visibleBlocks.clear();
   renderSlices(canvases.horizontal, "z");  // horizontal slices (fixed Z)
   renderSlices(canvases.verticalX, "x");   // vertical X slices (fixed X)
   renderSlices(canvases.verticalY, "y");   // vertical Y slices (fixed Y)
@@ -120,7 +123,7 @@ function preloadTextures(callback) {
   const images = {
     desert: 'art/desert.png',
     steppe: 'art/steppe.png',
-    montane: 'art/montane.jpg'
+    montane: 'art/montane.png'
   };
   let loaded = 0;
   const total = Object.keys(images).length;
@@ -164,7 +167,7 @@ const faces = {
     {
       name: "bottom",
       offset: 0, // zPos
-      texture: "desert",
+      texture: "steppe",
       isVisible: (world, x, y, zNeg, zPos) =>
         world[x]?.[y]?.[zPos]?.isBlock && !(world[x]?.[y]?.[zNeg]?.isBlock),
       map: (gy, gOther, cellSize, gridSize) => [
@@ -179,7 +182,7 @@ const faces = {
       offset: -1,
       texture: "steppe",
       isVisible: (world, xNeg, xPos, y, z) =>
-        world[xNeg]?.[y]?.[z]?.isBlock && !(world[xPos]?.[y]?.[z]?.isBlock),
+        world[xNeg]?.[y]?.[z]?.material != 'air' && !(world[xPos]?.[y]?.[z]?.material != 'air' ),
       map: (gy, gOther, cellSize, gridSize) => [
         gy * cellSize, (gridSize - gOther - 1) * cellSize
       ]
@@ -189,7 +192,7 @@ const faces = {
       offset: 0,
       texture: "steppe",
       isVisible: (world, xNeg, xPos, y, z) =>
-        world[xPos]?.[y]?.[z]?.isBlock && !(world[xNeg]?.[y]?.[z]?.isBlock),
+        world[xPos]?.[y]?.[z]?.material != 'air' && !(world[xNeg]?.[y]?.[z]?.material != 'air' ),
       map: (gy, gOther, cellSize, gridSize) => [
         gy * cellSize, (gridSize - gOther - 1) * cellSize
       ]
@@ -202,7 +205,7 @@ const faces = {
       offset: -1,
       texture: "steppe",
       isVisible: (world, x, yNeg, yPos, z) =>
-        world[x]?.[yNeg]?.[z]?.isBlock && !(world[x]?.[yPos]?.[z]?.isBlock),
+        world[x]?.[yNeg]?.[z]?.material != 'air' && !(world[x]?.[yPos]?.[z]?.material != 'air'),
       map: (gy, gOther, cellSize, gridSize) => [
         gOther * cellSize, (gridSize - gy - 1) * cellSize
       ]
@@ -212,7 +215,7 @@ const faces = {
       offset: 0,
       texture: "steppe",
       isVisible: (world, x, yNeg, yPos, z) =>
-        world[x]?.[yPos]?.[z]?.isBlock && !(world[x]?.[yNeg]?.[z]?.isBlock),
+        world[x]?.[yPos]?.[z]?.material != 'air' && !(world[x]?.[yNeg]?.[z]?.material != 'air'),
       map: (gy, gOther, cellSize, gridSize) => [
         gOther * cellSize, (gridSize - gy - 1) * cellSize
       ]
@@ -236,7 +239,7 @@ function renderSlices(canvases, axis) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const plane = (axis === "z")
-      ? (player.worldZ - midPlaneIndex + i)
+      ? (player.worldZ + 2 - midPlaneIndex + i)
       : (axis === "x")
       ? (player.worldX - midPlaneIndex + i)
       : (player.worldY - midPlaneIndex + i);
@@ -250,15 +253,15 @@ function renderSlices(canvases, axis) {
         } else if (axis === "x") {
           worldX = plane;
           worldY = player.worldY - halfGrid + gy ;
-          worldZ = player.worldZ - halfGrid + gOther;
+          worldZ = player.worldZ + 2 - halfGrid + gOther;
         } else { // y
           worldX = player.worldX - halfGrid + gOther;
           worldY = plane;
-          worldZ = player.worldZ - halfGrid + gy;
+          worldZ = player.worldZ + 2 - halfGrid + gy;
         }
 
         // skip out of bounds
-        if (worldX < 0 || worldY < 0 || worldZ < -20 || worldX >= sizeX || worldY >= sizeY || worldZ >= 19) continue;
+        if (worldX < 0 || worldY < 0 || worldZ < -20 || worldX >= sizeX || worldY >= sizeY) continue;
 
 
 
@@ -285,7 +288,10 @@ function renderSlices(canvases, axis) {
             visible = face.isVisible(worldData, worldX, yNeg, yPos, worldZ);
           }
 
+          const blockID = `${worldX},${worldY},${worldZ}`;
           if (visible) {
+
+            visibleBlocks.set(blockID, worldData[worldX]?.[worldY]?.[worldZ]);
             ctx.save();
             if (applyStyle) ctx.filter = "brightness(80%)";
             ctx.drawImage(
@@ -295,6 +301,8 @@ function renderSlices(canvases, axis) {
             );
             ctx.restore();
           }
+
+          
 
 
         }
@@ -318,7 +326,7 @@ export function getTerrainHeight(x, y) {
       return z; // top-most solid block
     }
   }
-  return 6; // if no blocks, default ground
+  return 1; // if no blocks, default ground
 }
 
 async function handleMovement(e) {
@@ -334,6 +342,13 @@ async function handleMovement(e) {
   // Right direction vector (perpendicular)
   const rightX = Math.round(Math.cos(rad + Math.PI / 2));
   const rightY = Math.round(Math.sin(rad + Math.PI / 2));
+
+  // const { x, y, z } = getFacingBlockCoords();
+  // const facingBlock = worldData[x]?.[y]?.[z];
+  // if (facingBlock.elevation > player.worldZ) {
+  //   // can't move forward if the block in front is more than 1 unit higher
+  //   return;
+  // }
 
   switch (e.key.toLowerCase()) {
     case "a": // forward
@@ -383,16 +398,16 @@ async function handleMovement(e) {
     applyNeoTransforms();
 
 
-    const floor = document.querySelector('.floor');
-    if (player.worldZ <= 6) floor.classList.add('visible');
-    else floor.classList.remove('visible');
+    // const floor = document.querySelector('.floor');
+    // if (player.worldZ <= 2) floor.classList.add('visible');
+    // else floor.classList.remove('visible');
   }
 }
 
 
 function updatePlayerHeight() {
   const groundZ = getTerrainHeight(player.worldX, player.worldY);
-  player.worldZ = groundZ + 2; // stand just above the top block
+  player.worldZ = groundZ; // stand just above the top block
 }
 
 
@@ -401,7 +416,103 @@ function updateCoordinatesText() {
   xyz.querySelector('#x').textContent = player.worldX;
   xyz.querySelector('#y').textContent = player.worldY;
   xyz.querySelector('#z').textContent = player.worldZ;
+
+
+  if (worldData[player.worldX]?.[player.worldY]?.[player.worldZ]?.hasTree === true) {
+      xyz.querySelector('#block').textContent = 'tree';
+  } else {
+    xyz.querySelector('#block').textContent = 'grass';
+  }
+
+  xyz.querySelector('#blocks').textContent = visibleBlocks.size;
 }
 
 
 window.addEventListener("keydown", handleMovement);
+
+function getFacingBlockCoords() {
+  const rad = (-SETTINGS.yaw + 90) * Math.PI / 180;
+  const dirX = Math.round(Math.cos(rad));
+  const dirY = Math.round(Math.sin(rad));
+  const x = player.worldX + dirX;
+  const y = player.worldY + dirY;
+  const z = player.worldZ + 1; // standing above block
+  return { x, y, z };
+}
+
+function removeFacingBlock() {
+  const { x, y, z } = getFacingBlockCoords();
+  if (
+    x >= 0 && x < worldData.length &&
+    y >= 0 && y < worldData[0].length &&
+    z >= 0 && z < worldData[0][0].length
+  ) {
+    if (worldData[x][y][z].isBlock) {
+      const block = worldData[x][y][z];
+      console.log(block);
+      if (worldData[x][y][z-1]?.isBlock === true) {
+          worldData[x][y][z-1].material = "grass";
+      }
+
+      worldData[x][y][z].elevation = worldData[x][y][z].elevation - 1;
+      worldData[x][y][z].isBlock = false;
+      worldData[x][y][z].material = "air";
+
+      applyAmbientOccusion(worldData[x][y][z]);
+      renderWorldToCanvases();
+      updateCoordinatesText();
+      updateEPlane();
+      applyNeoTransforms();
+      updateAllCardboardRotations();
+
+    }
+  }
+}
+
+function placeBlock() {
+  const { x, y, z } = getFacingBlockCoords();
+  if (
+    x >= 0 && x < worldData.length &&
+    y >= 0 && y < worldData[0].length &&
+    z >= 0 && z < worldData[0][0].length
+  ) {
+    if (!worldData[x][y][z].isBlock) {
+      worldData[x][y][z].isBlock = true;
+      worldData[x][y][z].material = "grass";
+      worldData[x][y][z].elevation = z;
+
+      applyAmbientOccusion(worldData[x][y][z]);
+      renderWorldToCanvases();
+      updateCoordinatesText();
+      updateEPlane();
+      applyNeoTransforms();
+      updateAllCardboardRotations();
+    }
+  }
+}
+
+window.addEventListener("click", (e) => {
+  if (e.button === 2) {
+    placeBlock();
+  } else if (e.button === 0) {
+    removeFacingBlock();
+  }
+
+});
+
+window.addEventListener("keydown", (e) => {
+  if (e.key.toLowerCase() === "f") {
+    removeFacingBlock();
+  }
+});
+window.addEventListener("keydown", (e) => {
+  if (e.key.toLowerCase() === "e") {
+    placeBlock();
+  }
+});
+
+function applyAmbientOccusion(block) {
+
+
+
+}

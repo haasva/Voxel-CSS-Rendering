@@ -2,7 +2,13 @@ import { createNoise2D } from 'simplex-noise';
 
 export let worldData;
 
+let sizeX = 500;
+let sizeY = 500;
+let sizeZ = 20;
 
+  let elevations = new Array(sizeX).fill(0).map(() =>
+    new Array(sizeY).fill(0)
+  );
 
 class WorldGenerator {
   constructor({
@@ -40,9 +46,7 @@ _generateWorld() {
   );
 
   // store elevations first so we can compare neighbors
-  let elevations = new Array(sizeX).fill(0).map(() =>
-    new Array(sizeY).fill(0)
-  );
+
 
   for (let x = 0; x < sizeX; x++) {
     for (let y = 0; y < sizeY; y++) {
@@ -61,10 +65,9 @@ _generateWorld() {
           world[x][y][z].isBlock = true;
           world[x][y][z].elevation = elevation;
 
-          if (z === elevation) {
+          if (z <= elevation) {
             world[x][y][z].material = "grass";
-            if (Math.random() < 0.1) {
-              world[x][y][z].material = "tree";
+            if (Math.random() < 0.1 && z === elevation) {
               world[x][y][z].hasTree = true;
             }
           }
@@ -118,7 +121,7 @@ _generateWorld() {
 
 
 
-const generator = new WorldGenerator({
+export const generator = new WorldGenerator({
   sizeX: 500,
   sizeY: 500,
   sizeZ: 20,
@@ -133,3 +136,40 @@ export function generateWorldData() {
   worldData = generator.getWorldData();
 }
 
+
+
+export function applyShading(world) {
+    // shading step
+  const dirs = [
+    [1, 0], 
+    [-1, 0],
+    [0, 1], 
+    [0, -1],
+    [-1, -1],
+    [-1, 1],
+    [1, 1],
+    [1, -1]
+  ];
+
+  for (let x = 0; x < sizeX; x++) {
+    for (let y = 0; y < sizeY; y++) {
+      let elevation = elevations[x][y];
+      if (elevation < 0 || elevation >= sizeZ) continue;
+
+      const topBlock = world[x][y][elevation];
+      if (!topBlock.isBlock) continue;
+
+      // check if any neighbor is higher
+      for (let [dx, dy] of dirs) {
+        const nx = x + dx;
+        const ny = y + dy;
+        if (nx < 0 || ny < 0 || nx >= sizeX || ny >= sizeY) continue;
+
+        if (elevations[nx][ny] > elevation) {
+          topBlock.shadedTop = true;
+          break;
+        }
+      }
+    }
+  }
+}

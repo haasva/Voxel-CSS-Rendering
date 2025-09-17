@@ -1,0 +1,5 @@
+        // const isHigher = getTerrainHeight(player.worldX + rightX, player.worldY + rightY) > getTerrainHeight(player.worldX, player.worldY);
+        // if (isHigher) {
+        //   // don't allow movement if the terrain is higher
+        //   break;
+        // }

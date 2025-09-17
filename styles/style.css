@@ -244,12 +244,12 @@
 #ePlane .eCell .cardboard {
     width: 100px;
     height: 100px;
-    translate: 0px -50px;
+    translate: -0px -50px;
     overflow: visible;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center bottom;
-    transform: rotateX(-90deg) rotateY(var(--rotation-z)) scale3d(3,3,3);
+    transform: rotateX(-90deg) rotateY(var(--rotation-z)) scale3d(3, 3, 3);
     transform-origin: bottom;
     image-rendering: pixelated;
 } 
@@ -293,6 +293,5 @@ display: none;
 outline: 1px solid rgba(255, 1, 1, 0.4);
 display: none;
 }
-
 
 

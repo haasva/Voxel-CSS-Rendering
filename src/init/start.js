@@ -43,6 +43,8 @@ document.addEventListener('keydown', (event) => {
       }
 });
 
+togglePointerLock();
+
 
 export function togglePointerLock() {
 

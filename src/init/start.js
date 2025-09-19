@@ -34,7 +34,15 @@ const engineWrapper = document.getElementById('engine-wrapper');
 
 document.addEventListener('mousemove', updateCameraRotation);
 // apply touch control
-document.addEventListener('touchmove', updateCameraRotation);
+document.addEventListener('touchstart', (event) => {
+    if (event.touches.length === 1) {
+        updateCameraRotation();
+    }
+});
+document.addEventListener('touchmove', (event) => {
+        updateCameraRotation(event);
+});
+
 
 document.addEventListener('keydown', (event) => {
       if (event.code === 'Space') {
@@ -63,8 +71,19 @@ export function togglePointerLock() {
 
 function updateCameraRotation(event) {
     if (SETTINGS.pointerLock === false) return;
-    const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-    const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+
+    // 
+
+    let movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+    let movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+
+  // also considers touch event
+    if (event.touches && event.touches.length === 1) {
+        const touch = event.touches[0];
+        movementX = (touch.clientX - (window.innerWidth)) / 20;
+        movementY = (touch.clientY - (window.innerHeight)) / 20;
+    }
+    
   
     SETTINGS.yaw += -(movementX / window.innerWidth) * 180;
     SETTINGS.pitch += (movementY / window.innerHeight) * 60;

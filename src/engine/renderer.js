@@ -333,6 +333,8 @@ const controls = document.getElementById('controls');
 Array.from(controls.querySelectorAll("button")).forEach(btn => {
   btn.addEventListener("click", () => {
     const direction = btn.id;
+    SETTINGS.pitch = 0;
+    applyNeoTransforms();
     handleMovement(direction);
   });
 });

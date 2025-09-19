@@ -7,7 +7,7 @@ import { initEPlane, cardboardMap } from "../engine/entity-plane.js";
 export let SETTINGS = {
     pointerLock: false,
     yaw: 0,   // z rotation
-    pitch: 90,  // angle
+    pitch: 0,  // angle
     translateZ: -0.4,
     translateX: 0,
     translateY: 0,

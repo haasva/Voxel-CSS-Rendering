@@ -90,6 +90,8 @@ export function applyNeoTransforms() {
     `;
 }
 
+applyNeoTransforms();
+
 
 export function updateAllCardboardRotations() {
     cardboardMap.forEach((_, cardboard) => {

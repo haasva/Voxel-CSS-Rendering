@@ -329,7 +329,16 @@ export function getTerrainHeight(x, y) {
   return 1; // if no blocks, default ground
 }
 
-async function handleMovement(e) {
+const controls = document.getElementById('controls');
+Array.from(controls.querySelectorAll("button")).forEach(btn => {
+  btn.addEventListener("click", () => {
+    const direction = btn.id;
+    handleMovement(direction);
+  });
+});
+
+
+async function handleMovement(direction) {
   let moved = false;
 
   // Convert yaw into radians
@@ -350,8 +359,8 @@ async function handleMovement(e) {
   //   return;
   // }
 
-  switch (e.key.toLowerCase()) {
-    case "a": // forward
+  switch (direction) {
+    case "left": // forward
       if (player.worldX + dirX >= 7 && player.worldX + dirX < worldData.length - 7 &&
           player.worldY + dirY >= 7 && player.worldY + dirY < worldData[0].length - 7) {
         player.worldX += dirX;
@@ -360,7 +369,7 @@ async function handleMovement(e) {
       }
       break;
 
-    case "d": // backward
+    case "right": // backward
       if (player.worldX - dirX >= 7 && player.worldX - dirX < worldData.length - 7 &&
           player.worldY - dirY >= 7 && player.worldY - dirY < worldData[0].length - 7) {
         player.worldX -= dirX;
@@ -369,7 +378,7 @@ async function handleMovement(e) {
       }
       break;
 
-    case "w": // right
+    case "front": // right
       if (player.worldX + rightX >= 7 && player.worldX + rightX < worldData.length - 7 &&
           player.worldY + rightY >= 7 && player.worldY + rightY < worldData[0].length - 7) {
         player.worldX += rightX;
@@ -378,7 +387,7 @@ async function handleMovement(e) {
       }
       break;
 
-    case "s": // left
+    case "back": // left
       if (player.worldX - rightX >= 7 && player.worldX - rightX < worldData.length - 7 &&
           player.worldY - rightY >= 7 && player.worldY - rightY < worldData[0].length - 7) {
         player.worldX -= rightX;
@@ -428,7 +437,22 @@ function updateCoordinatesText() {
 }
 
 
-window.addEventListener("keydown", handleMovement);
+window.addEventListener("keydown", (e) => {
+  if (["w", "a", "s", "d"].includes(e.key.toLowerCase())) {
+    e.preventDefault();
+    let direction = "";
+    if (e.key.toLowerCase() === "w") {
+      direction = "front";
+    } else if (e.key.toLowerCase() === "s") {
+      direction = "back";
+    } else if (e.key.toLowerCase() === "a") {
+      direction = "left";
+    } else if (e.key.toLowerCase() === "d") {
+      direction = "right";
+    }
+    handleMovement(direction);
+  }
+});
 
 function getFacingBlockCoords() {
   const rad = (-SETTINGS.yaw + 90) * Math.PI / 180;
@@ -513,6 +537,6 @@ window.addEventListener("keydown", (e) => {
 
 function applyAmbientOccusion(block) {
 
-
+//
 
 }

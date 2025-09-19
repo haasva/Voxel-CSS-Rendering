@@ -33,6 +33,8 @@ const engineWrapper = document.getElementById('engine-wrapper');
 
 
 document.addEventListener('mousemove', updateCameraRotation);
+// apply touch control
+document.addEventListener('touchmove', updateCameraRotation);
 
 document.addEventListener('keydown', (event) => {
       if (event.code === 'Space') {

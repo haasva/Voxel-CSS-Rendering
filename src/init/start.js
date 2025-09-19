@@ -19,6 +19,27 @@ async function startGame() {
     generateWorldData();
     initEPlane();
     createVoxelCanvasGrid();
+    if (window.matchMedia("(max-width: 900px)").matches) {
+      // Request fullscreen
+      if (engineWrapper.requestFullscreen) {
+        await engineWrapper.requestFullscreen();
+      } else if (engineWrapper.webkitRequestFullscreen) {
+        await engineWrapper.webkitRequestFullscreen();
+      } else if (engineWrapper.mozRequestFullScreen) {
+        await engineWrapper.mozRequestFullScreen();
+      } else if (engineWrapper.msRequestFullscreen) {
+        await engineWrapper.msRequestFullscreen();
+      }
+
+      // Lock orientation to landscape
+      if (screen.orientation && screen.orientation.lock) {
+        try {
+          await screen.orientation.lock('landscape');
+        } catch (e) {
+          // Some browsers may not support orientation lock
+        }
+      }
+    }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -34,11 +55,7 @@ const engineWrapper = document.getElementById('engine-wrapper');
 
 document.addEventListener('mousemove', updateCameraRotation);
 // apply touch control
-document.addEventListener('touchstart', (event) => {
-    if (event.touches.length === 1) {
-        updateCameraRotation();
-    }
-});
+
 document.addEventListener('touchmove', (event) => {
         updateCameraRotation(event);
 });

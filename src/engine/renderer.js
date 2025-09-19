@@ -334,8 +334,15 @@ Array.from(controls.querySelectorAll("button")).forEach(btn => {
   btn.addEventListener("click", () => {
     const direction = btn.id;
     SETTINGS.pitch = 0;
+    
+    if (direction === "left") {
+      SETTINGS.yaw += 45;
+    } else if (direction === "right") {
+      SETTINGS.yaw -= 45;
+    } else {
+      handleMovement(direction);
+    }
     applyNeoTransforms();
-    handleMovement(direction);
   });
 });
 
@@ -518,6 +525,10 @@ function placeBlock() {
 }
 
 window.addEventListener("click", (e) => {
+
+  // check if event target is not a button
+  if (e.target.tagName === "BUTTON") return;
+  if (e.target.id === "controls") return;
   if (e.button === 2) {
     placeBlock();
   } else if (e.button === 0) {

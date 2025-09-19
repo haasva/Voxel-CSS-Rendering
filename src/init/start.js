@@ -78,12 +78,12 @@ function updateCameraRotation(event) {
     }
  
     applyNeoTransforms();
-    updateAllCardboardRotations();
+    
 
 }
 
 export function applyNeoTransforms() {
-
+updateAllCardboardRotations();
 
   renderer.style.transform = `
   
